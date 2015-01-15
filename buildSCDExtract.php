@@ -10,11 +10,15 @@ class SCDextract
   
   public function __construct($filename)
   {
+        print("------Building SCD List ------\n");
+        $time_start = microtime(true);
 	print("Importing SCD Extract {$filename}\n");
 	$this->hosts = new parseCSV($filename);
         print(count($this->hosts->data)." assets in SCD.\n");
         $this->filename = $filename;
         $this->host_list = array_column($this->hosts->data,"ASSET NAME");
+	$total_time = microtime(true) - $time_start;
+        print("Time taken: ".$total_time." seconds\n");
   }
   protected function resetCSV()
   {

@@ -13,12 +13,11 @@ class nonCompliantORRExtractAnalysis
   protected $unique_orr_hosts;
   protected $extract_dates;
   
-  public function __construct($orr_filename,$scd_filename, $filterString = null, $rebuildProfiles = false)
+  public function __construct($orr_filename,$scd_list, $filterString = null, $rebuildProfiles = false)
   {
     print("--Building ORR non compliant device analysis reports --\n");
-    print("--Importing SCD Assets--\n");
     $time_start = microtime(true);
-    $this->scd = new SCDExtract($scd_filename);
+    $this->scd = $scd_list;
     //create new csv object, apply filter if need be, parse object
     print("--Importing RAW ORR Extract --\n"); 
     $this->orrCSV = new parseCSV($orr_filename);
@@ -109,7 +108,7 @@ class nonCompliantORRExtractAnalysis
   }
 }
 
-$nonCompliantOrrAnalysis = new nonCompliantORRExtractAnalysis("orrNonCompliantPresent.csv","output/SCDextract/SCD1-9-2015.csv",null,false);
+$nonCompliantOrrAnalysis = new nonCompliantORRExtractAnalysis("orrNonCompliantPresent.csv",new SCDExtract("output/SCDextract/SCD1-9-2015.csv"),null,false);
 $nonCompliantOrrAnalysis->dashboard();
 print("---Assets now in SCD from current extract---\n");
 // print_r($orrAnalysis->nowinSCD());
