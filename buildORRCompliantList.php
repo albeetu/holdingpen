@@ -45,5 +45,5 @@ class orrCompliantAssets
 }
 
 print ("------Building compliant ORR Asset report ------\n");
-$orrCompliantList = new orrCompliantAssets("orrCompliantPresent.csv");
+$orrCompliantList = new orrCompliantAssets("output/orrExtracts/orrExtract11-24-2014-compliant.csv");
 $orrCompliantList->dashboard();
