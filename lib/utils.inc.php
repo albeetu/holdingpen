@@ -12,3 +12,10 @@ function microtime_float()
     list($usec, $sec) = explode(" ", microtime());
     return ((float)$usec + (float)$sec);
 }
+
+function timecheckfile($filename)
+{
+  if (file_exists($filename))
+  {
+  }
+}

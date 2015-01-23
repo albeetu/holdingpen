@@ -15,13 +15,19 @@ class orrNonCompliantAssets
   protected $failed_ENV;
   protected $failed_all;
   protected $noncompliantCSV;
+  protected $day_range; #
+  protected $report_date;
   
   public function __construct($orrNonCompliantFile, $SCDList = null)
   {
+
+    # pass in a procesed orrNonCompliant host list.
     $this->scd = $SCDList;
     print("--Importing RAW ORR NonCompliant Extract :: $orrNonCompliantFile --\n");
     $this->noncompliantCSV = new parseCSV($orrNonCompliantFile);
     $this->unique_assets = array_unique(array_column($this->noncompliantCSV->data,"Host Name"));
+    $this->num_unique_assets = count($this->unique_assets);
+    $this->report_date = $this->noncompliantCSV->data[0]["Sourced on"];
     $this->orr_filename = $orrNonCompliantFile;
     $this->failed_CSP = $this->failed_set("CSP");
     $this->failed_PAR = $this->failed_set("PAR");
@@ -33,11 +39,11 @@ class orrNonCompliantAssets
 
   public function dashboard()
   {
-    print("--ORR non compliant assets Dashboard--\n");
+    print("--ORR non compliant assets dashboard for {$this->report_date} --\n");
     ## count the number of records
     print(count($this->noncompliantCSV->data)." records in non-compliant ORR list.\n");
     ## count the number of unique hosts
-    print(count($this->unique_assets). " unique hosts in non-compliant ORR list.\n");
+    print($this->num_unique_assets." unique hosts in non-compliant ORR list.\n");
     ## scrubed count against SCD
     print(count($this->assets_not_in_SCD)." hosts recommended to be added to SCD.\n");
     print($this->gotNumFailed("CSP")." hosts failed CSP\n");
@@ -45,7 +51,17 @@ class orrNonCompliantAssets
     print($this->gotNumFailed("ENV")." hosts failed ENV\n");
     print($this->gotNumFailed("ALL")." hosts failed all components\n");
   }
+  public function csvRow()
+  {
+	return "{$this->report_date},{$this->num_unique_assets},{$this->gotNumFailed("CSP")},{$this->gotNumFailed("PAR")},{$this->gotNumFailed("ENV")},{$this->gotNumFailed("ALL")}\n";
+  }
+  public function getUniqueAssets()
+  {
+  }
 
+  public function getReportDate()
+  {
+  }
   public function gotNumFailed($value)
   {
     switch($value)
@@ -105,7 +121,8 @@ class orrNonCompliantAssets
   } 
 
 }
-
+/*
+>>>>>>> dev-dashboard
 print ("------Building compliant ORR Asset report ------\n");
 $orrCompliantList = new orrNonCompliantAssets("output/orrExtracts/orrExtract11-24-2014-noncompliant.csv");
 $orrCompliantList->dashboard();
@@ -119,3 +136,6 @@ $orrCompliantList = new orrNonCompliantAssets("output/orrExtracts/orrExtract1-13
 $orrCompliantList->dashboard();
 $orrCompliantList = new orrNonCompliantAssets("output/orrExtracts/orrExtract1-19-2015-noncompliant.csv");
 $orrCompliantList->dashboard();
+<<<<<<< HEAD
+=======
+*/
