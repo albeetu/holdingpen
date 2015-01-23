@@ -22,7 +22,11 @@ class nonCompliantORRExtractAnalysis
     print("--Importing RAW ORR Extract --\n"); 
     $this->orrCSV = new parseCSV($orr_filename);
     $this->orr_filename = $orr_filename;
-    print("--Build non compliant ORR Asset profiles-- \n");
+    $this->orrCount = count($this->orrCSV->data);
+    $this->extract_dates = array_unique(array_column($this->orrCSV->data,"Sourced on"));
+    $this->unique_orr_hosts = array_unique(array_column($this->orrCSV->data,"Host Name"));
+    $unique_host_count = count($this->unique_orr_hosts);
+    print("--Build non compliant ORR Asset for {$unique_host_count} profiles-- \n");
     if ($rebuildProfiles) { $this->hostProfiles(); }
     print("--Profile build complete --\n");
     $total_time = microtime(true) - $time_start;
@@ -36,15 +40,12 @@ class nonCompliantORRExtractAnalysis
     print("--ORR Dashboard Statistics--\n");
     //determine stats of files
     //number of records
-    $this->extract_dates = array_unique(array_column($this->orrCSV->data,"Sourced on"));
     print(count($this->extract_dates)." extract dates\n");
     print("Extract Date List :: \n");
     print_r($this->extract_dates);
     print("Inbox statistics :: \n");
-    $this->orrCount = count($this->orrCSV->data);
     print($this->orrCount." total records in ORR Extract\n");
     //number of unique hosts
-    $this->unique_orr_hosts = array_unique(array_column($this->orrCSV->data,"Host Name"));
     print(count($this->unique_orr_hosts)." unique non compliant hosts\n");
     print("Outbox statistics :: \n");
     //print_r($this->unique_orr_hosts);
@@ -72,15 +73,17 @@ class nonCompliantORRExtractAnalysis
   }
   public function hostProfiles()
   {
-    // determine some kind of trend for all unique hosts
+    // determine some kind of trend for all unique and non-compliant hosts.
     foreach ($this->unique_orr_hosts as $host)
     {
-       print ("Building profile for {$host}\n");
+       $time_start = microtime(true);
+       print ("Building profile for {$host}... ");
        $this->orrCSV->conditions = "Host Name is {$host}";
        // Don't care for this architecture...will be slow.
        $this->orrCSV->parse($this->orr_filename);
        file_put_contents("output/hostProfiles/{$host}.profile.json",json_encode($this->orrCSV->data)."\n");
        file_put_contents("output/hostProfiles/{$host}.profile",print_r($this->orrCSV->data,true));
+       print (microtime(true) - $time_start." seconds\n");
        //file_put_contents("output/hostProfiles{$host}.profile",print_r(hostAnalysis($this->orrCSV->data,true));
     }
     print(count($this->unique_orr_hosts)." host profiles created\n");
@@ -107,8 +110,9 @@ class nonCompliantORRExtractAnalysis
     // timestamp
   }
 }
+// Take the fully compiled non compliant report and generates analysis reports.
 
-$nonCompliantOrrAnalysis = new nonCompliantORRExtractAnalysis("orrNonCompliantPresent.csv",new SCDExtract("output/SCDextract/SCD1-9-2015.csv"),null,false);
+$nonCompliantOrrAnalysis = new nonCompliantORRExtractAnalysis("orrExtractNonCompliant.csv",new SCDExtract("output/SCDextract/SCD1-9-2015.csv"),null,true);
 $nonCompliantOrrAnalysis->dashboard();
 print("---Assets now in SCD from current extract---\n");
 // print_r($orrAnalysis->nowinSCD());
