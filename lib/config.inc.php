@@ -15,24 +15,11 @@ $config['NonCompliantListName'] = "orrNonCompliantPresent.csv";
 
 #filelist
 
-$config['NonCompliantList'] = Array(
-"output/orrExtracts/orrExtract11-24-2014-noncompliant.csv",
-"output/orrExtracts/orrExtract12-3-2014-noncompliant.csv",
-"output/orrExtracts/orrExtract12-19-2014-noncompliant.csv",
-"output/orrExtracts/orrExtract1-9-2015-noncompliant.csv",
-"output/orrExtracts/orrExtract1-13-2015-noncompliant.csv",
-"output/orrExtracts/orrExtract1-19-2015-noncompliant.csv",
-"output/orrExtracts/orrExtract1-22-2015-noncompliant.csv"
-);
+$config['holdingpencsvslist'] = glob($config['holdingpencsvs']."*.csv");
+$config['NonCompliantList'] = glob($config['orrExtracts']."orrExtract*-noncompliant.csv");
+$config['Compliant'] = glob($config['orrExtracts']."orrExtract*-compliant.csv");
 
-$config['Compliant'] = Array(
-"output/orrExtracts/orrExtract11-24-2014-compliant.csv",
-"output/orrExtracts/orrExtract12-3-2014-compliant.csv",
-"output/orrExtracts/orrExtract12-19-2014-compliant.csv",
-"output/orrExtracts/orrExtract1-9-2015-compliant.csv",
-"output/orrExtracts/orrExtract1-13-2015-compliant.csv",
-"output/orrExtracts/orrExtract1-19-2015-compliant.csv",
-"output/orrExtracts/orrExtract1-22-2015-compliant.csv"
-);
+#csv headers
 
+$config['orrExtract'] = "Host Name,DNS Name,IP Address,Region,Seen by CSP,Seen by PAR,Seen by ENV,Compliant,Days out of Compliance,Sourced on\n";
 

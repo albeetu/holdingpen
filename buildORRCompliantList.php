@@ -1,5 +1,6 @@
 <?php
 
+require_once 'lib/config.inc.php';
 require_once 'buildSCDExtract.php';
 require_once 'hostProfileStory.php';
 require_once 'lib/utils.inc.php';
@@ -18,17 +19,23 @@ class orrCompliantAssets
     $this->compliantCSV = new parseCSV($orrCompliantFile);
     $this->unique_assets = array_unique(array_column($this->compliantCSV->data,"Host Name"));
     $this->orr_filename = $orrCompliantFile;
+    $this->report_date = $this->compliantCSV->data[0]["Sourced on"];
   }
 
   public function dashboard()
   {
-    print("--ORR Compliant Assets Dashboard--\n");
+    print("--ORR Compliant Assets Dashboard for {$this->report_date} --\n");
     ## count the number of records
     print(count($this->compliantCSV->data)." records in compliant ORR list.\n");
     ## count the number of unique hosts
     print(count($this->unique_assets). " unique hosts in compliant ORR list.\n");
     ## scrubed count against SCD
     print(count($this->assets_not_in_SCD)." hosts recommended to be added to SCD.\n");
+  }
+  
+  public function getAssetCount()
+  {
+    return count($this->unique_assets);
   }
   
   protected function unique_list_SCDscrubbed()
@@ -45,5 +52,10 @@ class orrCompliantAssets
 }
 
 print ("------Building compliant ORR Asset report ------\n");
-$orrCompliantList = new orrCompliantAssets("output/orrExtracts/orrExtract11-24-2014-compliant.csv");
-$orrCompliantList->dashboard();
+$index = 0;
+foreach($config['Compliant'] as $file)
+{ 
+  $orrCompliantList[$index] = new orrCompliantAssets($file);
+  $orrCompliantList[$index]->dashboard();
+  $index++;  
+}
