@@ -58,10 +58,16 @@ class orrNonCompliantAssets
   public function getUniqueAssets()
   {
   }
+  public function getAssetCount()
+  {
+    return $this->num_unique_assets;
+  }
 
   public function getReportDate()
   {
+     return $this->report_date;
   }
+
   public function gotNumFailed($value)
   {
     switch($value)

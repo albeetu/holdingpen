@@ -19,3 +19,15 @@ function timecheckfile($filename)
   {
   }
 }
+
+function cmp_reportdate($a,$b)
+{
+  /*
+   print "--a--\n";
+   print ($a->{'Sourced on'}."\n");
+   print "--b--\n";
+   print ($b->{'Sourced on'}."\n");
+  */
+   return (strtotime(str_replace("-","/",$a->getReportDate())) > strtotime(str_replace("-","/",($b->getReportDate()))));
+}
+

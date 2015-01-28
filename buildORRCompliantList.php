@@ -11,6 +11,7 @@ class orrCompliantAssets
   protected $unique_assets;
   protected $assets_not_in_SCD;
   protected $scd;
+  protected $report_date;
   
   public function __construct($orrCompliantFile, $SCDList = null)
   {
@@ -32,6 +33,10 @@ class orrCompliantAssets
     ## scrubed count against SCD
     print(count($this->assets_not_in_SCD)." hosts recommended to be added to SCD.\n");
   }
+  public function getReportDate()
+  {
+    return $this->report_date;
+  }
   
   public function getAssetCount()
   {
@@ -49,13 +54,4 @@ class orrCompliantAssets
 # Compare what's in SCD
 # 
 
-}
-
-print ("------Building compliant ORR Asset report ------\n");
-$index = 0;
-foreach($config['Compliant'] as $file)
-{ 
-  $orrCompliantList[$index] = new orrCompliantAssets($file);
-  $orrCompliantList[$index]->dashboard();
-  $index++;  
 }
