@@ -33,6 +33,10 @@ class orrCompliantAssets
     ## scrubed count against SCD
     print(count($this->assets_not_in_SCD)." hosts recommended to be added to SCD.\n");
   }
+  public function getUniqueAssets()
+  {
+    return $this->unique_assets;
+  }
   public function getReportDate()
   {
     return $this->report_date;
