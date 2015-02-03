@@ -57,6 +57,7 @@ class orrNonCompliantAssets
   }
   public function getUniqueAssets()
   {
+    return $this->unique_assets;
   }
   public function getAssetCount()
   {
