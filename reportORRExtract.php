@@ -98,6 +98,7 @@ class nonCompliantORRExtractAnalysis
     {
       $story = new hostProfileStory($host);
       $lines = array_map('trim',file("output/hostProfiles/{$host}.story"));
+      // add in calculations
       $lines_csv = implode(",",$lines);
       fwrite($reportCard,$lines_csv."\n");
     }
@@ -112,7 +113,7 @@ class nonCompliantORRExtractAnalysis
 }
 // Take the fully compiled non compliant report and generates analysis reports.
 
-$nonCompliantOrrAnalysis = new nonCompliantORRExtractAnalysis("orrExtractNonCompliant.csv",new SCDExtract("output/SCDextract/SCD1-9-2015.csv"),null,true);
+$nonCompliantOrrAnalysis = new nonCompliantORRExtractAnalysis("orrNonCompliantPresent.csv",new SCDExtract("output/SCDextract/SCD1-29-2015.csv"),null,true);
 $nonCompliantOrrAnalysis->dashboard();
 print("---Assets now in SCD from current extract---\n");
 // print_r($orrAnalysis->nowinSCD());
