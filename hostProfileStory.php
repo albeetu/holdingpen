@@ -8,7 +8,7 @@ function cmp($a,$b)
    print "--b--\n";
    print ($b->{'Sourced on'}."\n");
   */
-   return (strtotime(str_replace('/','-',$a->{'Sourced on'})) > strtotime(str_replace('/','-',$b->{'Sourced on'})));
+   return (strtotime(str_replace('/','-',$a->{'sourcedon'})) > strtotime(str_replace('/','-',$b->{'sourcedon'})));
 }
 
 class hostProfileStory
@@ -41,15 +41,15 @@ class hostProfileStory
     $this->times_reported = count($this->subject);
     $this->file = fopen("output/hostProfiles/{$hostname}.story","w") or die();
     fwrite($this->file,$hostname."\n");
-    fwrite($this->file,$this->subject[0]->{"DNS Name"}."\n");
-    fwrite($this->file,$this->subject[0]->{"IP Address"}."\n");
+    fwrite($this->file,$this->subject[0]->{"dnsname"}."\n");
+    fwrite($this->file,$this->subject[0]->{"ipaddress"}."\n");
     fwrite($this->file,$this->times_reported."\n");
-    $latest_entry_seconds = max(array_map( function($element) {return strtotime(str_replace('-','/',$element->{"Sourced on"}));}, $this->subject));
+    $latest_entry_seconds = max(array_map( function($element) {return strtotime(str_replace('-','/',$element->{"sourcedon"}));}, $this->subject));
     $this->latest_entry = date('m/d/Y',$latest_entry_seconds);
     fwrite($this->file,$this->latest_entry."\n");
-    $this->story("CSP");
-    $this->story("PAR");
-    $this->story("ENV");
+    $this->story("csp");
+    $this->story("par");
+    $this->story("env");
     //fwrite($this->file,$this->score,"\n");
     fclose($this->file);
   }
@@ -62,9 +62,9 @@ class hostProfileStory
    $latest_reading = "1-1-2000";
    foreach($this->subject as $story_point)
    {
-      if (!empty($story_point->{"Seen by {$component}"})) 
+      if (!empty($story_point->{"seenby{$component}"})) 
       {
-        $sp_date = str_replace('-','/',$story_point->{"Seen by {$component}"}); 
+        $sp_date = str_replace('-','/',$story_point->{"seenby{$component}"}); 
         $readings++;
         if (strtotime($sp_date) > strtotime($latest_reading)) { $latest_reading = $sp_date; }
       }

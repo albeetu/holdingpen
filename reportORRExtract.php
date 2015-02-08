@@ -12,6 +12,7 @@ class nonCompliantORRExtractAnalysis
   protected $orrCount;
   protected $unique_orr_hosts;
   protected $extract_dates;
+  protected $db;
   
   public function __construct($orr_filename,$scd_list, $filterString = null, $rebuildProfiles = false)
   {
@@ -26,15 +27,15 @@ class nonCompliantORRExtractAnalysis
     $this->extract_dates = array_unique(array_column($this->orrCSV->data,"Sourced on"));
     $this->unique_orr_hosts = array_unique(array_column($this->orrCSV->data,"Host Name"));
     $unique_host_count = count($this->unique_orr_hosts);
-    print("--Load hosts into database--");
+    print("--Load hosts into database--\n");
     try
     {
       $options = array("table"=>"data", "delimiter" => ",");
-      $db = new PDO('sqlite:holdingpen');
-      $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+      $this->db = new PDO('sqlite:holdingpen');
+      $this->db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
       print "cleaning...\n";
-      $db->exec("DROP TABLE if exists data");
-      print_r(import_csv_to_sqlite($db,$orr_filename,$options));
+      $this->db->exec("DROP TABLE if exists data");
+      import_csv_to_sqlite($this->db,$orr_filename,$options);
     }
     catch(PDOException $e)
     {
@@ -99,11 +100,13 @@ class nonCompliantORRExtractAnalysis
     {
        $time_start = microtime(true);
        print ("Building profile for {$host}... ");
-       $this->orrCSV->conditions = "Host Name is {$host}";
-       // Don't care for this architecture...will be slow.
-       $this->orrCSV->parse($this->orr_filename);
-       //file_put_contents("output/hostProfiles/{$host}.profile.json",json_encode($this->orrCSV->data)."\n");
-       //file_put_contents("output/hostProfiles/{$host}.profile",print_r($this->orrCSV->data,true));
+       $select = $this->db->prepare('select * from data where hostname = :hostname');
+       //$select->setFetchMode(PDO::FETCH_ASSOC);
+       $select->bindParam(':hostname',trim($host),PDO::PARAM_STR,15);
+       $select->execute();
+       $rows=$select->fetchAll();
+       file_put_contents("output/hostProfiles/{$host}.profile.json",json_encode($rows)."\n");
+       file_put_contents("output/hostProfiles/{$host}.profile",print_r($rows,true));
        print (microtime(true) - $time_start." seconds\n");
        //file_put_contents("output/hostProfiles{$host}.profile",print_r(hostAnalysis($this->orrCSV->data,true));
     }
