@@ -26,6 +26,20 @@ class nonCompliantORRExtractAnalysis
     $this->extract_dates = array_unique(array_column($this->orrCSV->data,"Sourced on"));
     $this->unique_orr_hosts = array_unique(array_column($this->orrCSV->data,"Host Name"));
     $unique_host_count = count($this->unique_orr_hosts);
+    print("--Load hosts into database--");
+    try
+    {
+      $options = array("table"=>"data", "delimiter" => ",");
+      $db = new PDO('sqlite:holdingpen');
+      $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+      print "cleaning...\n";
+      $db->exec("DROP TABLE if exists data");
+      print_r(import_csv_to_sqlite($db,$orr_filename,$options));
+    }
+    catch(PDOException $e)
+    {
+      print 'Execption : '.$e->getMessage();
+    }
     print("--Build non compliant ORR Asset for {$unique_host_count} profiles-- \n");
     if ($rebuildProfiles) { $this->hostProfiles(); }
     print("--Profile build complete --\n");
@@ -71,6 +85,13 @@ class nonCompliantORRExtractAnalysis
      {
      }
   }
+  public function printHosts()
+  {
+    foreach ($this->unique_orr_hosts as $host)
+    {
+      file_put_contents('hosts.txt',$host."\n",FILE_APPEND);
+    }
+  }
   public function hostProfiles()
   {
     // determine some kind of trend for all unique and non-compliant hosts.
@@ -81,8 +102,8 @@ class nonCompliantORRExtractAnalysis
        $this->orrCSV->conditions = "Host Name is {$host}";
        // Don't care for this architecture...will be slow.
        $this->orrCSV->parse($this->orr_filename);
-       file_put_contents("output/hostProfiles/{$host}.profile.json",json_encode($this->orrCSV->data)."\n");
-       file_put_contents("output/hostProfiles/{$host}.profile",print_r($this->orrCSV->data,true));
+       //file_put_contents("output/hostProfiles/{$host}.profile.json",json_encode($this->orrCSV->data)."\n");
+       //file_put_contents("output/hostProfiles/{$host}.profile",print_r($this->orrCSV->data,true));
        print (microtime(true) - $time_start." seconds\n");
        //file_put_contents("output/hostProfiles{$host}.profile",print_r(hostAnalysis($this->orrCSV->data,true));
     }
