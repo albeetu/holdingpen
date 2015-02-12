@@ -137,7 +137,7 @@ class nonCompliantORRExtractAnalysis
 }
 // Take the fully compiled non compliant report and generates analysis reports.
 
-$nonCompliantOrrAnalysis = new nonCompliantORRExtractAnalysis("orrNonCompliantPresent.csv",new SCDExtract("output/SCDextract/SCD1-29-2015.csv"),null,true);
+$nonCompliantOrrAnalysis = new nonCompliantORRExtractAnalysis("orrNonCompliantPresent.csv",new SCDExtract("output/SCDextract/SCD2-10-2015.csv"),null,true);
 $nonCompliantOrrAnalysis->dashboard();
 print("---Assets now in SCD from current extract---\n");
 // print_r($orrAnalysis->nowinSCD());
