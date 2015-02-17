@@ -18,6 +18,7 @@ class hostProfileStory
   protected $times_reported;
   protected $score;
   protected $latest_entry;
+  protected $latest_entry_seconds;
   protected $latest_entry_CSP;
   protected $latest_entry_PAR;
   protected $latest_entry_ENV;
@@ -44,13 +45,13 @@ class hostProfileStory
     fwrite($this->file,$this->subject[0]->{"dnsname"}."\n");
     fwrite($this->file,$this->subject[0]->{"ipaddress"}."\n");
     fwrite($this->file,$this->times_reported."\n");
-    $latest_entry_seconds = max(array_map( function($element) {return strtotime(str_replace('-','/',$element->{"sourcedon"}));}, $this->subject));
-    $this->latest_entry = date('m/d/Y',$latest_entry_seconds);
+    $this->latest_entry_seconds = max(array_map( function($element) {return strtotime(str_replace('-','/',$element->{"sourcedon"}));}, $this->subject));
+    $this->latest_entry = date('m/d/Y',$this->latest_entry_seconds);
     fwrite($this->file,$this->latest_entry."\n");
     $this->story("csp");
     $this->story("par");
     $this->story("env");
-    //fwrite($this->file,$this->score,"\n");
+    fwrite($this->file,$this->score."\n");
     fclose($this->file);
   }
 
@@ -77,9 +78,13 @@ class hostProfileStory
       if ($latest_reading !== "1-1-2000" )
       {
          fwrite($this->file,$latest_reading."\n");
+         // days apart here
+         $date_diff = intval(($this->latest_entry_seconds - strtotime($latest_reading))/86400);
+         fwrite($this->file,"$date_diff\n");
       }
       else
       {
+         fwrite($this->file,"\n");
          fwrite($this->file,"\n");
       }
       $this->score++;
@@ -88,6 +93,7 @@ class hostProfileStory
     { 
       //print "$component Failed\n";
       fwrite($this->file,"0\n");
+      fwrite($this->file,"\n");
       fwrite($this->file,"\n");
     }
   }

@@ -115,7 +115,7 @@ class nonCompliantORRExtractAnalysis
   
   public function reportCard()
   {
-    $header = "Host Name,DNS Name,IP Address,Times Reported,Asset Last Reported,CSP,Last Seen CSP,PAR,Last Seen PAR,ENV,Last Seen ENV";
+    $header = "Host Name,DNS Name,IP Address,Times Reported,Asset Last Reported,CSP,Last Seen CSP,Diff Days CSP,PAR,Last Seen PAR,Diff Days PAR,ENV,Last Seen ENV,Diff Days ENV,Score";
     $reportCard = fopen("reportORRCard.csv","w");
     fwrite($reportCard,$header."\n");
     foreach ($this->unique_orr_hosts as $host)
