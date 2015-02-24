@@ -16,11 +16,15 @@ class orrCompliantAssets
   public function __construct($orrCompliantFile, $SCDList = null)
   {
     $this->scd = $SCDList;
-    print("--Importing RAW ORR Compliant Extract --\n");
+    print("--Importing RAW ORR Compliant Extract for {$orrCompliantFile}--\n");
     $this->compliantCSV = new parseCSV($orrCompliantFile);
     $this->unique_assets = array_unique(array_column($this->compliantCSV->data,"Host Name"));
     $this->orr_filename = $orrCompliantFile;
-    $this->report_date = $this->compliantCSV->data[0]["Sourced on"];
+    // should do and if statement here
+    //preg_match('/([d]+-[\d]+-[\d][\d][\d][\d])/',$orrCompliantFile,$date);
+    preg_match('/[\d]+-[\d]+-[\d][\d][\d][\d]/',$orrCompliantFile,$date);
+    $this->report_date = $date[0];    
+    //$this->report_date = $this->compliantCSV->data[0]["Sourced on"];
   }
 
   public function dashboard()
